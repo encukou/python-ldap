@@ -591,7 +591,6 @@ class Test01_ReconnectLDAPObject(Test00_SimpleLDAPObject):
                 str('_trace_stack_limit'): 5,
                 str('_uri'): self.server.ldap_uri,
                 str('bytes_mode'): l1.bytes_mode,
-                str('bytes_mode_hardfail'): l1.bytes_mode_hardfail,
                 str('timeout'): -1,
             },
         )

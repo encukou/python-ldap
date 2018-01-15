@@ -47,20 +47,20 @@ The behavior of python-ldap 3.0 in Python 2 is influenced by a ``bytes_mode``
 argument to :func:`ldap.initialize`.
 The argument can take these values:
 
+``bytes_mode=False``: strictly future-compatible
+
+    Text values must be represented as ``unicode``.
+    An error is raised if python-ldap receives a text value as bytes (``str``).
+
+    On Python 3, this is the only available option.
+
 ``bytes_mode=True``: backwards-compatible
 
     Text values returned from python-ldap are always bytes (``str``).
     Text values supplied to python-ldap may be either bytes or Unicode.
     The encoding for bytes is always assumed to be UTF-8.
 
-    Not available in Python 3.
-
-``bytes_mode=False``: strictly future-compatible
-
-    Text values must be represented as ``unicode``.
-    An error is raised if python-ldap receives a text value as bytes (``str``).
-
-Unspecified: relaxed mode with warnings
+``bytes_mode='warn'`` (default for Python 2): relaxed mode with warnings
 
     Causes a warning on Python 2.
 
@@ -71,6 +71,10 @@ Unspecified: relaxed mode with warnings
     The warnings are of type :class:`~ldap.LDAPBytesWarning`, which
     is a subclass of :class:`BytesWarning` designed to be easily
     :ref:`filtered out <filter-bytes-warning>` if needed.
+
+``bytes_mode='silent'``: relaxed mode
+
+    As ``bytes_mode='warn'``, but skips the warning.
 
 Backwards-compatible behavior is not scheduled for removal until Python 2
 itself reaches end of life.

@@ -108,15 +108,13 @@ class SimpleLDAPObject:
     # ----------
 
     # By default, raise a TypeError when receiving invalid args
-    self.bytes_mode_hardfail = True
     if bytes_mode is None and PY2:
       _raise_byteswarning(
         "Under Python 2, python-ldap uses bytes by default. "
         "This will be removed in Python 3 (no bytes for DN/RDN/field names). "
         "Please call initialize(..., bytes_mode=False) explicitly.")
-      bytes_mode = True
       # Disable hard failure when running in backwards compatibility mode.
-      self.bytes_mode_hardfail = False
+      bytes_mode = 'warn'
     elif bytes_mode and not PY2:
       raise ValueError("bytes_mode is *not* supported under Python 3.")
     # On by default on Py2, off on Py3.
@@ -143,19 +141,20 @@ class SimpleLDAPObject:
       if isinstance(value, bytes):
         return value
       else:
-        if self.bytes_mode_hardfail:
-          raise TypeError("All provided fields *must* be bytes when bytes mode is on; got %r" % (value,))
-        else:
+        if self.bytes_mode == 'silent':
+          pass
+        elif self.bytes_mode == 'warn':
           _raise_byteswarning(
             "Received non-bytes value for '{}' with default (disabled) bytes mode; "
             "please choose an explicit "
             "option for bytes_mode on your LDAP connection".format(arg_name))
-          return value.encode('utf-8')
+        else:
+          raise TypeError("All provided fields *must* be bytes when bytes mode is on; got %r" % (value,))
     else:
       if not isinstance(value, text_type):
         raise TypeError("All provided fields *must* be text when bytes mode is off; got %r" % (value,))
       assert not isinstance(value, bytes)
-      return value.encode('utf-8')
+    return value.encode('utf-8')
 
   def _bytesify_modlist(self, arg_name, modlist, with_opcode):
     """Adapt a modlist according to bytes_mode.
