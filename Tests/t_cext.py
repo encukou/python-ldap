@@ -831,6 +831,8 @@ class TestLdapCExtension(SlapdTestCase):
     def test_tls_ext_noca(self):
         l = self._open_conn(bind=False)
         l.set_option(_ldap.OPT_PROTOCOL_VERSION, _ldap.VERSION3)
+        l.set_option(_ldap.OPT_X_TLS_REQUIRE_CERT, _ldap.OPT_X_TLS_HARD)
+        l.set_option(_ldap.OPT_X_TLS_NEWCTX, 0)
         with self.assertRaises(_ldap.CONNECT_ERROR) as e:
             l.start_tls_s()
         # known resaons:
